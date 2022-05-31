@@ -1,30 +1,37 @@
-package projeto.integrador.controleBovino.vo;
+package projeto.integrador.controleBovino.form;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import projeto.integrador.controleBovino.modelo.Bovino;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-public class BovinoVO {
+import org.springframework.format.annotation.DateTimeFormat;
 
+public class BovinoForm {
+
+	@NotNull (message = "Campo Código não informado.") @NotEmpty(message = "Campo Código precisa de pelo menos 1 caractere.")
 	private String codigo;
+	@NotNull
 	private Double litrosLeite;
+	@NotNull
 	private Double quilosRacao;
+	@NotNull
 	private BigDecimal peso;
+	@NotNull @DateTimeFormat(pattern = "dd-MM-yyyy")
 	private LocalDate nascimento;
-	private Boolean abatido;
+	private boolean abatido;
 
-	public BovinoVO() {
+	public BovinoForm() {
 	}
 
-	public BovinoVO(String codigo, Double litrosLeite, Double quilosRacao, BigDecimal peso,
-			LocalDate nascimento, Boolean abatido) {
+	public BovinoForm(String codigo, Double litrosLeite, Double quilosRacao, BigDecimal peso,
+			LocalDate nascimento) {
 		this.codigo = codigo;
 		this.litrosLeite = litrosLeite;
 		this.quilosRacao = quilosRacao;
 		this.peso = peso;
 		this.nascimento = nascimento;
-		this.abatido = abatido;
 	}
 
 	public String getCodigo() {
@@ -46,7 +53,7 @@ public class BovinoVO {
 	public LocalDate getNascimento() {
 		return nascimento;
 	}
-	
+
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
@@ -67,16 +74,12 @@ public class BovinoVO {
 		this.nascimento = nascimento;
 	}
 	
-	public Boolean isAbatido() {
+	public boolean isAbatido() {
 		return abatido;
 	}
 	
-	public void setAbatido(Boolean abatido) {
+	public void setAbatido(boolean abatido) {
 		this.abatido = abatido;
-	}
-
-	public static BovinoVO entityToVO(Bovino bovino) {
-		return new BovinoVO(bovino.getCodigo(), bovino.getLitrosLeite(), bovino.getQuilosRacao(), bovino.getPeso(), bovino.getNascimento(), bovino.isAbatido());
 	}
 
 }

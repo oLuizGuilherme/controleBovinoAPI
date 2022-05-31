@@ -7,15 +7,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import projeto.integrador.controleBovino.form.BovinoForm;
 import projeto.integrador.controleBovino.modelo.Bovino;
 import projeto.integrador.controleBovino.repository.BovinoRepository;
 import projeto.integrador.controleBovino.vo.BovinoVO;
@@ -30,6 +34,11 @@ public class BovinoController {
 	@GetMapping()
 	public List<Bovino> listarTodos() {
 		return bovinoRepository.findAll();
+	}
+	
+	@GetMapping("/{codigo}")
+	public ResponseEntity<BovinoVO> bovinoByCodigo(@RequestParam String codigo) {
+		return ResponseEntity.ok(BovinoVO.entityToVO(bovinoRepository.findByCodigo(codigo)));
 	}
 
 	@GetMapping("/relatorio")
@@ -50,10 +59,10 @@ public class BovinoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<BovinoVO> criarBovino(@RequestBody BovinoVO bovinoVO, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<BovinoVO> criarBovino(@RequestBody @Valid BovinoForm bovinoForm, UriComponentsBuilder uriBuilder) {
 
-		Bovino bovino = bovinoRepository.save(new Bovino(bovinoVO.getCodigo(), bovinoVO.getLitrosLeite(),
-				bovinoVO.getQuilosRacao(), bovinoVO.getPeso(), bovinoVO.getNascimento()));
+		Bovino bovino = bovinoRepository.save(new Bovino(bovinoForm.getCodigo(), bovinoForm.getLitrosLeite(),
+				bovinoForm.getQuilosRacao(), bovinoForm.getPeso(), bovinoForm.getNascimento(), bovinoForm.isAbatido()));
 
 		URI uri = uriBuilder.path("/bovino/{id}").buildAndExpand(bovino.getId()).toUri();
 		return ResponseEntity.created(uri).body(BovinoVO.entityToVO(bovino));

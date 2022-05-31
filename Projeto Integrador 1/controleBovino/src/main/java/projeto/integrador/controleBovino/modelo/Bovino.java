@@ -20,17 +20,19 @@ public class Bovino {
 	private Double quilosRacao;
 	private BigDecimal peso;
 	private LocalDate nascimento;
+	private Boolean abatido;
 
 	public Bovino() {
 	}
 
-	public Bovino(String codigo, Double litrosLeite, Double quilosRacao, BigDecimal peso, LocalDate nascimento) {
+	public Bovino(String codigo, Double litrosLeite, Double quilosRacao, BigDecimal peso, LocalDate nascimento, Boolean abatido) {
 		this.id = UUID.randomUUID().toString();
 		this.codigo = codigo;
 		this.litrosLeite = litrosLeite;
 		this.quilosRacao = quilosRacao;
 		this.peso = peso;
 		this.nascimento = nascimento;
+		this.abatido = abatido;
 	}
 
 	public String getId() {
@@ -55,6 +57,10 @@ public class Bovino {
 
 	public LocalDate getNascimento() {
 		return nascimento;
+	}
+	
+	public boolean isAbatido() {
+		return abatido;
 	}
 	
 }
