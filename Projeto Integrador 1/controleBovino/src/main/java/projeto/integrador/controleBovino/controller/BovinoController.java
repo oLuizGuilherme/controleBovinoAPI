@@ -23,6 +23,7 @@ import projeto.integrador.controleBovino.form.BovinoForm;
 import projeto.integrador.controleBovino.modelo.Bovino;
 import projeto.integrador.controleBovino.repository.BovinoRepository;
 import projeto.integrador.controleBovino.vo.BovinoVO;
+import projeto.integrador.controleBovino.vo.QuantidadeLeiteVO;
 
 @RestController()
 @RequestMapping("/bovino")
@@ -67,5 +68,21 @@ public class BovinoController {
 		URI uri = uriBuilder.path("/bovino/{id}").buildAndExpand(bovino.getId()).toUri();
 		return ResponseEntity.created(uri).body(BovinoVO.entityToVO(bovino));
 	}
-
+	
+	@GetMapping("/relatorio/producaodeleitesemanal")
+	public ResponseEntity<QuantidadeLeiteVO> somarLeite() {
+		List<Bovino> bovinosLst = bovinoRepository.findAll();
+		
+		Double producaoLeiteSemanal = 0.0;
+		
+		for (Bovino bovino : bovinosLst) {
+			producaoLeiteSemanal = producaoLeiteSemanal + bovino.getLitrosLeite();
+		}
+		
+		QuantidadeLeiteVO quantidadeLeiteVO = new QuantidadeLeiteVO(producaoLeiteSemanal, bovinosLst.size());
+		
+		return ResponseEntity.ok(quantidadeLeiteVO);
+		
+	}
+	
 }
