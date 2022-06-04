@@ -6,16 +6,17 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,13 +40,13 @@ public class BovinoController {
 	}
 
 	@GetMapping("/{codigo}")
-	public ResponseEntity<BovinoVO> bovinoByCodigo(@RequestParam String codigo) {
+	public ResponseEntity<BovinoVO> bovinoByCodigo(@PathVariable String codigo) {
 		return ResponseEntity.ok(BovinoVO.entityToVO(bovinoRepository.findByCodigo(codigo)));
 	}
 
-	@GetMapping("/relatorio")
-	public ResponseEntity<List<BovinoVO>> listarAbate() {
-		List<Bovino> bovinosLst = bovinoRepository.findAll();
+	@GetMapping("/abater")
+	public ResponseEntity<List<BovinoVO>> bovinosAAbater() {
+		List<Bovino> bovinosLst = bovinoRepository.findByAbatido(false);
 
 		List<BovinoVO> bovinosAAbater = new ArrayList<BovinoVO>();
 
@@ -71,9 +72,9 @@ public class BovinoController {
 		return ResponseEntity.created(uri).body(BovinoVO.entityToVO(bovino));
 	}
 	
-	@GetMapping("/relatorio/leitesemanal")
+	@GetMapping("/leitesemanal")
 	public ResponseEntity<QuantidadeLeiteVO> somarLeite() {
-		List<Bovino> bovinosLst = bovinoRepository.findAll();
+		List<Bovino> bovinosLst = bovinoRepository.findByAbatido(false);
 		
 		Double producaoLeiteSemanal = 0.0;
 		
@@ -88,10 +89,10 @@ public class BovinoController {
 	}
 	
 
-	@GetMapping("/racao")
+	@GetMapping("/racaosemanal")
 	public ResponseEntity<QuantidadeRacaoVO> somaRacao() {
 
-		List<Bovino> bovinosLst = bovinoRepository.findAll();
+		List<Bovino> bovinosLst = bovinoRepository.findByAbatido(false);
 		
 		int somaBovino = 0;
 		BigDecimal somaRacao = new BigDecimal(0);
@@ -106,6 +107,15 @@ public class BovinoController {
 		QuantidadeRacaoVO quantidadeRacaoVO = new QuantidadeRacaoVO(somaBovino, somaRacao);
 		return ResponseEntity.ok(quantidadeRacaoVO);
 
+	}
+	
+	@GetMapping("/abatidos")
+	public ResponseEntity<List<BovinoVO>> retornarAbatidos(){
+		List<Bovino> abatidos = bovinoRepository.findByAbatido(true);
+		
+		List<BovinoVO> abatidosVO = abatidos.stream().map(bovino -> BovinoVO.entityToVO(bovino)).collect(Collectors.toList());
+		
+		return ResponseEntity.ok(abatidosVO);
 	}
 
 }
