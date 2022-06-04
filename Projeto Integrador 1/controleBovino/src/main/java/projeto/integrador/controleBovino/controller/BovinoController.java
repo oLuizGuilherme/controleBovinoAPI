@@ -24,6 +24,7 @@ import projeto.integrador.controleBovino.modelo.Bovino;
 import projeto.integrador.controleBovino.repository.BovinoRepository;
 import projeto.integrador.controleBovino.vo.BovinoVO;
 import projeto.integrador.controleBovino.vo.QuantidadeLeiteVO;
+import projeto.integrador.controleBovino.vo.QuantidadeRacaoVO;
 
 @RestController()
 @RequestMapping("/bovino")
@@ -36,7 +37,7 @@ public class BovinoController {
 	public List<Bovino> listarTodos() {
 		return bovinoRepository.findAll();
 	}
-	
+
 	@GetMapping("/{codigo}")
 	public ResponseEntity<BovinoVO> bovinoByCodigo(@RequestParam String codigo) {
 		return ResponseEntity.ok(BovinoVO.entityToVO(bovinoRepository.findByCodigo(codigo)));
@@ -60,7 +61,8 @@ public class BovinoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<BovinoVO> criarBovino(@RequestBody @Valid BovinoForm bovinoForm, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<BovinoVO> criarBovino(@RequestBody @Valid BovinoForm bovinoForm,
+			UriComponentsBuilder uriBuilder) {
 
 		Bovino bovino = bovinoRepository.save(new Bovino(bovinoForm.getCodigo(), bovinoForm.getLitrosLeite(),
 				bovinoForm.getQuilosRacao(), bovinoForm.getPeso(), bovinoForm.getNascimento(), bovinoForm.isAbatido()));
@@ -69,7 +71,7 @@ public class BovinoController {
 		return ResponseEntity.created(uri).body(BovinoVO.entityToVO(bovino));
 	}
 	
-	@GetMapping("/relatorio/producaodeleitesemanal")
+	@GetMapping("/relatorio/leitesemanal")
 	public ResponseEntity<QuantidadeLeiteVO> somarLeite() {
 		List<Bovino> bovinosLst = bovinoRepository.findAll();
 		
@@ -85,4 +87,25 @@ public class BovinoController {
 		
 	}
 	
+
+	@GetMapping("/racao")
+	public ResponseEntity<QuantidadeRacaoVO> somaRacao() {
+
+		List<Bovino> bovinosLst = bovinoRepository.findAll();
+		
+		int somaBovino = 0;
+		BigDecimal somaRacao = new BigDecimal(0);
+
+		for (Bovino bovino : bovinosLst) {
+			if (!bovino.isAbatido()) {
+				somaBovino++;
+				somaRacao = somaRacao.add(new BigDecimal(bovino.getQuilosRacao()));
+			}
+		}
+
+		QuantidadeRacaoVO quantidadeRacaoVO = new QuantidadeRacaoVO(somaBovino, somaRacao);
+		return ResponseEntity.ok(quantidadeRacaoVO);
+
+	}
+
 }
