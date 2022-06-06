@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -117,5 +118,30 @@ public class BovinoController {
 		
 		return ResponseEntity.ok(abatidosVO);
 	}
+	
+	@PutMapping("/racao/{codigo}/{quilosRacao}")
+	public ResponseEntity<BovinoVO> atualizaAlimentacao(@PathVariable String codigo, @PathVariable double quilosRacao) {
+		Bovino bovino = bovinoRepository.findByCodigo(codigo);
+		BovinoVO bovinoVO = BovinoVO.entityToVO(bovino);
+		bovinoVO.setQuilosRacao(quilosRacao);
+		bovino.atualizaRacao(bovinoVO);
+		
+		bovinoRepository.save(bovino);
+		
+		return ResponseEntity.ok(bovinoVO);
+	}
+	
+	@PutMapping("/leite/{codigo}/{litrosLeite}")
+	public ResponseEntity<BovinoVO> atualizaLitrosLeite(@PathVariable String codigo, @PathVariable double litrosLeite) {
+		Bovino bovino = bovinoRepository.findByCodigo(codigo);
+		BovinoVO bovinoVO = BovinoVO.entityToVO(bovino);
+		bovinoVO.setLitrosLeite(litrosLeite);
+		bovino.atualizaLeite(bovinoVO);
+		
+		bovinoRepository.save(bovino);
+		
+		return ResponseEntity.ok(bovinoVO);
+	}
+	
 
 }

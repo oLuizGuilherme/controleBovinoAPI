@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import projeto.integrador.controleBovino.vo.BovinoVO;
+
 @Entity
 public class Bovino {
 
@@ -61,6 +63,14 @@ public class Bovino {
 	
 	public boolean isAbatido() {
 		return abatido;
+	}
+	
+	public void atualizaRacao(BovinoVO bovinoVO) {
+		this.quilosRacao = bovinoVO.getQuilosRacao();
+	}
+	
+	public void atualizaLeite(BovinoVO bovinoVO) {
+		this.litrosLeite = bovinoVO.getLitrosLeite();
 	}
 	
 }
